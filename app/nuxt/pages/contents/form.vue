@@ -6,8 +6,11 @@
       </v-col>
     </v-row>
 
+    <!-- 画像ドロップゾーン -->
+    <ImageDropZone :max-files="5" :max-file-size="1000000" @file-add="onFileAdd" />
+
     <!-- 言語毎の設定 -->
-    <v-tabs v-model="languageTab" align-tabs="center">
+    <v-tabs v-model="languageTab" align-tabs="center" class="mt-5">
       <v-tab v-for="language in languages" :key="language.id" :value="language.id">
         {{ language.name }}
       </v-tab>
@@ -40,6 +43,10 @@ const contentFormDefault: ContentForm = {
 const contentForm = ref<ContentForm>(contentFormDefault)
 const languages = ref<Language[]>([])
 const languageTab = ref<number>(1)
+
+const onFileAdd = (files: File[]) => {
+  console.log(files)
+}
 
 // 言語情報一覧を取得
 const fetchLanguages = async () => {
