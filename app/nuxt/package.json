@@ -22,6 +22,7 @@
     "sass": "^1.75.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "vuedraggable": "^4.1.0",
     "yup": "^1.4.0",
     "yup-locale-ja": "^1.0.0"
   },

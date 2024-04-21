@@ -49,30 +49,29 @@
                 <th class="text-center">有効・無効</th>
               </tr>
             </thead>
-            <!-- <Sortable
-              :list="languagesForSort"
-              item-key="id"
+            <draggable
+              v-model="languagesForSort"
               tag="tbody"
-              :options="{ animation: 150, ghostClass: 'bg-blue-lighten-5' }"
-              @update="onUpdate"
+              item-key="id"
+              ghost-class="bg-blue-lighten-5"
+              :animation="150"
             >
               <template #item="{ element }">
-                <tr :key="element.id">
+                <tr class="sortable-item">
                   <td class="text-center">{{ element.position }}</td>
                   <td class="text-left">{{ element.name }}</td>
                   <td class="text-left">{{ element.label }}</td>
                   <td class="text-center">{{ element.isValid ? '有効' : '無効' }}</td>
                 </tr>
               </template>
-            </Sortable> -->
+            </draggable>
           </v-table>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="closeSortDialog">キャンセル</v-btn>
           <v-spacer />
-          <v-btn color="success" variant="tonal">更新</v-btn>
+          <v-btn color="success" variant="tonal" @click="updateLanguageSort">更新</v-btn>
         </v-card-actions>
-        {{ languagesForSort }}
       </v-card>
     </v-dialog>
   </div>
@@ -80,8 +79,6 @@
 
 <script setup lang="ts">
 import type { DataTableHeader, Options } from '@/components/DataTable.vue'
-// import type { SortableEvent } from 'sortablejs'
-// import { Sortable } from 'sortablejs-vue3'
 
 const headers: DataTableHeader = [
   { title: '表示順', key: 'position', sortable: true, align: 'center', width: 120 },
@@ -107,16 +104,22 @@ const sortDialog = ref<boolean>(false)
 const languagesForSort = ref<Language[]>([])
 const errorMsg = ref()
 
-const openSortDialog = async () => {
-  sortDialog.value = true
+// 言語情報一覧を取得
+const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
   const { data } = await useFetch('/api/languages', {
-    method: 'GET'
+    method: 'GET',
+    params: {
+      skip: (page - 1) * itemsPerPage,
+      take: itemsPerPage,
+      sortKey: sortBy[0]?.key,
+      sortOrder: sortBy[0]?.order
+    }
   })
-  languagesForSort.value = data.value.items
-}
 
-const closeSortDialog = () => {
-  sortDialog.value = false
+  if (data.value) {
+    languages.value = data.value.items
+    languageTotalLength.value = data.value.totalLength
+  }
 }
 
 // ダイアログを表示（新規登録）
@@ -144,21 +147,6 @@ const openEditDialog = (language: Language) => {
 // ダイアログを閉じる
 const closeFormDialog = () => {
   formDialog.value = false
-}
-
-// 言語情報一覧を取得
-const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
-  const { data } = await useFetch('/api/languages', {
-    method: 'GET',
-    params: {
-      skip: (page - 1) * itemsPerPage,
-      take: itemsPerPage,
-      sortKey: sortBy[0]?.key,
-      sortOrder: sortBy[0]?.order
-    }
-  })
-  languages.value = data.value.items
-  languageTotalLength.value = data.value.totalLength
 }
 
 // 言語情報を登録
@@ -208,5 +196,33 @@ const deleteLanguage = async () => {
   } else {
     console.log('エラー', error)
   }
+}
+
+// 並び替えダイアログを表示
+const openSortDialog = async () => {
+  sortDialog.value = true
+  const { data } = await useFetch('/api/languages', {
+    method: 'GET'
+  })
+
+  if (data.value) {
+    languagesForSort.value = data.value.items
+  }
+}
+
+// 並び替えダイアログを閉じる
+const closeSortDialog = () => {
+  sortDialog.value = false
+}
+
+// 言語の並び順を更新
+const updateLanguageSort = async () => {
+  await useFetch(`/api/languages/sort`, {
+    method: 'PUT',
+    body: languagesForSort.value,
+    watch: false
+  })
+  closeSortDialog()
+  fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
 }
 </script>

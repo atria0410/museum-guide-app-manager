@@ -4,7 +4,7 @@
     <v-spacer />
     <v-btn icon>
       <v-avatar>
-        <v-img alt="John" src="https://cdn.vuetifyjs.com/images/john.jpg" />
+        <v-img alt="John" src="https://randomuser.me/api/portraits/women/85.jpg" />
       </v-avatar>
     </v-btn>
     <v-btn icon>

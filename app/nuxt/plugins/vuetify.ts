@@ -9,6 +9,9 @@ export default defineNuxtPlugin((app) => {
     defaults: {
       VTextField: {
         variant: 'outlined'
+      },
+      VTextarea: {
+        variant: 'outlined'
       }
     }
   })
