@@ -106,7 +106,7 @@ const errorMsg = ref()
 
 // 言語情報一覧を取得
 const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
-  const { data } = await useFetch('/api/languages', {
+  $fetch('/api/languages', {
     method: 'GET',
     params: {
       skip: (page - 1) * itemsPerPage,
@@ -114,12 +114,10 @@ const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
       sortKey: sortBy[0]?.key,
       sortOrder: sortBy[0]?.order
     }
+  }).then((data) => {
+    languages.value = data.items
+    languageTotalLength.value = data.totalLength
   })
-
-  if (data.value) {
-    languages.value = data.value.items
-    languageTotalLength.value = data.value.totalLength
-  }
 }
 
 // ダイアログを表示（新規登録）
@@ -151,63 +149,62 @@ const closeFormDialog = () => {
 
 // 言語情報を登録
 const registerLanguage = async () => {
-  const { data, error } = await useFetch('/api/languages', {
+  $fetch('/api/languages', {
     method: 'POST',
-    body: languageForm.value,
-    watch: false
+    body: languageForm.value
   })
-
-  if (data.value) {
-    closeFormDialog()
-    fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
-  } else {
-    errorMsg.value = error.value?.data.data
-  }
+    .then(() => {
+      closeFormDialog()
+      fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
+    })
+    .catch((error) => {
+      if (error.statusCode === 400) {
+        errorMsg.value = error.data.data
+      }
+    })
 }
 
 // 言語情報を更新
 const updateLanguage = async () => {
   const languageId = languageForm.value.id
-  const { data, error } = await useFetch(`/api/languages/${languageId}`, {
+  $fetch(`/api/languages/${languageId}`, {
     method: 'PUT',
-    body: languageForm.value,
-    watch: false
+    body: languageForm.value
   })
-
-  if (data.value) {
-    closeFormDialog()
-    fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
-  } else {
-    errorMsg.value = error.value?.data.data
-  }
+    .then(() => {
+      closeFormDialog()
+      fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
+    })
+    .catch((error) => {
+      if (error.statusCode === 400) {
+        errorMsg.value = error.data.data
+      }
+    })
 }
 
 // 言語情報を削除
 const deleteLanguage = async () => {
   const languageId = languageForm.value.id
-  const { data, error } = await useFetch(`/api/languages/${languageId}`, {
-    method: 'DELETE',
-    watch: false
+  $fetch(`/api/languages/${languageId}`, {
+    method: 'DELETE'
   })
-
-  if (data.value) {
-    closeFormDialog()
-    fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
-  } else {
-    console.log('エラー', error)
-  }
+    .then(() => {
+      closeFormDialog()
+      fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
+    })
+    .catch((error) => {
+      console.log('エラー', error)
+    })
 }
 
 // 並び替えダイアログを表示
 const openSortDialog = async () => {
   sortDialog.value = true
-  const { data } = await useFetch('/api/languages', {
+  $fetch('/api/languages', {
     method: 'GET'
+  }).then((data) => {
+    languagesForSort.value = data.items
   })
-
-  if (data.value) {
-    languagesForSort.value = data.value.items
-  }
 }
 
 // 並び替えダイアログを閉じる
@@ -217,12 +214,12 @@ const closeSortDialog = () => {
 
 // 言語の並び順を更新
 const updateLanguageSort = async () => {
-  await useFetch(`/api/languages/sort`, {
+  $fetch(`/api/languages/sort`, {
     method: 'PUT',
-    body: languagesForSort.value,
-    watch: false
+    body: languagesForSort.value
+  }).then(() => {
+    closeSortDialog()
+    fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
   })
-  closeSortDialog()
-  fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
 }
 </script>

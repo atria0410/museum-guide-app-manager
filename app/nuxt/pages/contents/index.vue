@@ -75,7 +75,7 @@ const contentsForSort = ref<Content[]>([])
 
 // 言語情報一覧を取得
 const fetchContents = async ({ page, itemsPerPage, sortBy }: Options) => {
-  const { data } = await useFetch('/api/contents', {
+  $fetch('/api/contents', {
     method: 'GET',
     params: {
       skip: (page - 1) * itemsPerPage,
@@ -83,24 +83,20 @@ const fetchContents = async ({ page, itemsPerPage, sortBy }: Options) => {
       sortKey: sortBy[0]?.key,
       sortOrder: sortBy[0]?.order
     }
+  }).then((data) => {
+    contents.value = data.items
+    contentTotalLength.value = data.totalLength
   })
-
-  if (data.value) {
-    contents.value = data.value.items
-    contentTotalLength.value = data.value.totalLength
-  }
 }
 
 // 並び替えダイアログを表示
 const openSortDialog = async () => {
   sortDialog.value = true
-  const { data } = await useFetch('/api/contents', {
+  $fetch('/api/contents', {
     method: 'GET'
+  }).then((data) => {
+    contentsForSort.value = data.items
   })
-
-  if (data.value) {
-    contentsForSort.value = data.value.items
-  }
 }
 
 // 並び替えダイアログを閉じる
@@ -110,12 +106,13 @@ const closeSortDialog = () => {
 
 // 言語の並び順を更新
 const updateContentSort = async () => {
-  await useFetch(`/api/contents/sort`, {
+  $fetch(`/api/contents/sort`, {
     method: 'PUT',
     body: contentsForSort.value,
     watch: false
+  }).then(() => {
+    closeSortDialog()
+    fetchContents({ page: 1, itemsPerPage: 10, sortBy: [] })
   })
-  closeSortDialog()
-  fetchContents({ page: 1, itemsPerPage: 10, sortBy: [] })
 }
 </script>

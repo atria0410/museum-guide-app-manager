@@ -52,17 +52,15 @@ const onFileAdd = (files: File[]) => {
 
 // 言語情報一覧を取得
 const fetchLanguages = async () => {
-  const { data } = await useFetch('/api/languages', {
+  $fetch('/api/languages', {
     method: 'GET',
     params: {
       sortKey: 'position',
       sortOrder: 'asc'
     },
     key: crypto.randomUUID()
-  })
-
-  if (data.value) {
-    languages.value = data.value.items
+  }).then((data) => {
+    languages.value = data.items
 
     for (let i = 0; i < languages.value.length; i++) {
       contentForm.value.details.push({
@@ -72,7 +70,7 @@ const fetchLanguages = async () => {
         audioPath: ''
       })
     }
-  }
+  })
 }
 
 onMounted(() => {
