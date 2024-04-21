@@ -1,0 +1,79 @@
+$header-color: #dddd;
+$border-style: solid;
+$border-width: 1px;
+$border-color: #adadaf;
+$border-radius: 4px;
+
+.disable-link-style {
+  color: inherit;
+  text-decoration: none;
+}
+
+.v-table {
+  .v-table__wrapper {
+    table {
+      thead {
+        tr {
+          th {
+            background-color: $header-color;
+            border-top: $border-style $border-width $border-color;
+            border-left: $border-style $border-width $border-color;
+            border-bottom: $border-style $border-width $border-color;
+            &:first-child {
+              border-top-left-radius: $border-radius;
+            }
+            &:last-child {
+              border-right: $border-style $border-width $border-color;
+              border-top-right-radius: $border-radius;
+            }
+            .v-data-table-header__content {
+              justify-content: center;
+            }
+          }
+        }
+      }
+      tbody {
+        tr {
+          td {
+            border-left: $border-style $border-width $border-color;
+            border-bottom: $border-style $border-width $border-color;
+            &:last-child {
+              border-right: $border-style $border-width $border-color;
+            }
+          }
+          &:last-child {
+            .v-data-table__td {
+              &:first-child {
+                border-bottom-left-radius: $border-radius;
+              }
+              &:last-child {
+                border-bottom-right-radius: $border-radius;
+              }
+            }
+          }
+        }
+
+        .v-data-table-rows-no-data {
+          td {
+            border-right: $border-style $border-width $border-color;
+            border-left: $border-style $border-width $border-color;
+            border-bottom: $border-style $border-width $border-color;
+            border-bottom-left-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+          }
+        }
+      }
+    }
+  }
+
+  .v-divider {
+    display: none;
+  }
+
+  .v-pagination {
+    margin-top: 5px;
+    .v-pagination__list {
+      justify-content: right;
+    }
+  }
+}

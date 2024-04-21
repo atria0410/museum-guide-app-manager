@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  lastName       String   @map("last_name")
+  firstName      String   @map("first_name")
+  iconPath       String   @map("icon_path")
+  loginId        String   @unique @map("login_id")
+  hashedPassword String   @map("hashed_password")
+  sessionId      String   @map("session_id")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("users")
+}
+
+model Language {
+  id        Int             @id @default(autoincrement())
+  name      String          @unique
+  label     String          @unique
+  position  Int
+  isValid   Boolean         @default(true) @map("is_valid")
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  details   ContentDetail[]
+
+  @@map("languages")
+}
+
+model Content {
+  id          Int             @id @default(autoincrement())
+  name        String          @unique
+  position    Int
+  isRecommend Boolean         @default(false) @map("is_recommend")
+  isPublic    Boolean         @default(true) @map("is_public")
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  details     ContentDetail[]
+  images      ContentImage[]
+
+  @@map("contents")
+}
+
+model ContentDetail {
+  id          Int      @id @default(autoincrement())
+  contentId   Int      @map("content_id")
+  languageId  Int      @map("language_id")
+  title       String
+  explanation String
+  audioPath   String   @map("audio_path")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  content     Content  @relation(fields: [contentId], references: [id])
+  Language    Language @relation(fields: [languageId], references: [id])
+
+  @@map("content_details")
+}
+
+model ContentImage {
+  id        Int      @id @default(autoincrement())
+  contentId Int      @map("content_id")
+  title     String
+  path      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  content   Content  @relation(fields: [contentId], references: [id])
+
+  @@map("content_images")
+}
