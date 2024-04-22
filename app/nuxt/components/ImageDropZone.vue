@@ -8,6 +8,7 @@
       :parallel-upload="3"
       :upload-on-drop="false"
       @added-file="onFileAdd"
+      @removed-file="onFileRemove"
     >
       <template #message>
         画像ファイルを選択してください
@@ -29,10 +30,14 @@ withDefaults(defineProps<Props>(), {
   maxFileSize: 1000000
 })
 
-const emit = defineEmits(['fileAdd'])
+const emit = defineEmits(['fileAdd', 'fileRemove'])
 
-const onFileAdd = (files: File[]) => {
-  emit('fileAdd', files)
+const onFileAdd = (item: { id: string; file: File }) => {
+  emit('fileAdd', item)
+}
+
+const onFileRemove = (item: { id: string; status: 'DONE' | 'ERROR' | 'QUEUE'; file: File }) => {
+  emit('fileRemove', item)
 }
 </script>
 

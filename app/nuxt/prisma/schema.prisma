@@ -17,10 +17,10 @@ model User {
   id             Int      @id @default(autoincrement())
   lastName       String   @map("last_name")
   firstName      String   @map("first_name")
-  iconPath       String   @map("icon_path")
+  iconPath       String?  @map("icon_path")
   loginId        String   @unique @map("login_id")
   hashedPassword String   @map("hashed_password")
-  sessionId      String   @map("session_id")
+  sessionId      String?  @map("session_id")
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
@@ -60,7 +60,7 @@ model ContentDetail {
   languageId  Int      @map("language_id")
   title       String
   explanation String
-  audioPath   String   @map("audio_path")
+  audioPath   String?  @map("audio_path")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
   content     Content  @relation(fields: [contentId], references: [id])
@@ -72,7 +72,6 @@ model ContentDetail {
 model ContentImage {
   id        Int      @id @default(autoincrement())
   contentId Int      @map("content_id")
-  title     String
   path      String
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)

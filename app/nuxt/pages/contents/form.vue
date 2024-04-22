@@ -7,47 +7,71 @@
     </v-row>
 
     <!-- 画像ドロップゾーン -->
-    <ImageDropZone :max-files="5" :max-file-size="1000000" @file-add="onFileAdd" />
+    <ImageDropZone :max-files="5" :max-file-size="1000000" @file-add="onFileAdd" @file-remove="onFileRemove" />
 
     <!-- 言語毎の設定 -->
-    <v-card variant="outlined" class="mt-5">
-      <v-tabs v-model="languageTab" bg-color="grey-lighten-3">
-        <v-tab v-for="language in languages" :key="language.id" :value="language.id">
-          {{ language.name }}
-        </v-tab>
-      </v-tabs>
-      <v-window v-model="languageTab">
-        <v-window-item v-for="(language, index) in languages" :key="language.id" :value="language.id">
-          <v-container fluid>
-            <v-row>
-              <v-col>
-                <v-text-field v-model="contentForm.details[index].title" label="タイトル" />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-textarea v-model="contentForm.details[index].explanation" label="解説" :rows="10" />
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-window-item>
-      </v-window>
-    </v-card>
+    <v-row>
+      <v-col>
+        <v-card variant="outlined" class="mt-5">
+          <v-tabs v-model="languageTab" bg-color="grey-lighten-3">
+            <v-tab v-for="language in languages" :key="language.id" :value="language.id">
+              {{ language.name }}
+            </v-tab>
+          </v-tabs>
+          <v-window v-model="languageTab">
+            <v-window-item v-for="(language, index) in languages" :key="language.id" :value="language.id">
+              <v-container fluid>
+                <v-row>
+                  <v-col>
+                    <v-text-field v-model="contentForm.details[index].title" label="タイトル" />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-textarea v-model="contentForm.details[index].explanation" label="解説" :rows="10" />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-window-item>
+          </v-window>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col>
+        <v-btn @click="registerContent">登録</v-btn>
+      </v-col>
+    </v-row>
+
+    {{ contentForm }}
   </v-container>
 </template>
 
 <script setup lang="ts">
 const contentFormDefault: ContentForm = {
   name: '',
-  details: []
+  isRecommend: true,
+  isPublic: true,
+  details: [],
+  images: []
 }
 
 const contentForm = ref<ContentForm>(contentFormDefault)
+const images = ref<{ id: string; file: File }[]>([])
 const languages = ref<Language[]>([])
 const languageTab = ref<number>(1)
 
-const onFileAdd = (files: File[]) => {
-  console.log(files)
+// ファイル追加
+const onFileAdd = (item: { id: string; file: File }) => {
+  images.value.push(item)
+  contentForm.value.images.push(item.file)
+}
+
+// ファイル削除
+const onFileRemove = (item: { id: string; status: 'DONE' | 'ERROR' | 'QUEUE'; file: File }) => {
+  images.value = images.value.filter((image) => image.id !== item.id)
+  contentForm.value.images = images.value.map((image) => image.file)
 }
 
 // 言語情報一覧を取得
@@ -71,6 +95,25 @@ const fetchLanguages = async () => {
       })
     }
   })
+}
+
+const registerContent = () => {
+  // const formData = new FormData()
+  // for (const [key, value] of Object.entries(contentForm.value)) {
+  //   formData.append(key, value)
+  // }
+
+  $fetch('/api/contents', {
+    method: 'POST',
+    body: contentForm.value
+  })
+    .then(() => {})
+    .catch((error) => {
+      console.log(error)
+      // if (error.statusCode === 400) {
+      //   errorMsg.value = error.data.data
+      // }
+    })
 }
 
 onMounted(() => {

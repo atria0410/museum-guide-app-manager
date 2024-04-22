@@ -3,14 +3,14 @@ import yup from '@/server/utils/yup.custom'
 
 const prisma = new PrismaClient()
 
+const languageSchema = yup.object().shape({
+  name: yup.string().required().unique(prisma, 'name'),
+  label: yup.string().required().unique(prisma, 'label'),
+  isValid: yup.bool().required()
+})
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-
-  const languageSchema = yup.object().shape({
-    name: yup.string().required().unique(prisma, 'name'),
-    label: yup.string().required().unique(prisma, 'label'),
-    isValid: yup.bool().required()
-  })
 
   // バリデーションチェック
   const values = await languageSchema.validate(body, { abortEarly: false }).catch((e) => {

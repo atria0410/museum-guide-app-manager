@@ -22,4 +22,17 @@ declare module 'yup' {
   }
 }
 
+yup.addMethod(yup.mixed<FileList>, 'fileSize', function (size: number) {
+  return this.test('fileSize', 'ファイルサイズが大きすぎます。', function (files) {
+    if (files === undefined || files.length === 0) return true
+    return files[0].size <= size
+  })
+})
+
+declare module 'yup' {
+  interface MixedSchema<TType, TContext> {
+    fileSize(size: number): yup.MixedSchema<TType, TContext>
+  }
+}
+
 export default yup

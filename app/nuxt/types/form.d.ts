@@ -1,7 +1,10 @@
 type ContentForm = {
   id?: number
   name: string
+  isRecommend: boolean
+  isPublic: boolean
   details: ContentDetailForm[]
+  images: File[]
 }
 
 type ContentDetailForm = {
@@ -9,7 +12,7 @@ type ContentDetailForm = {
   languageId: number
   title: string
   explanation: string
-  audioPath: string
+  audioPath: string?
 }
 
 type LanguageForm = {

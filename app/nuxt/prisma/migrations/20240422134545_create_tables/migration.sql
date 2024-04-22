@@ -3,10 +3,10 @@ CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "last_name" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
-    "icon_path" TEXT NOT NULL,
+    "icon_path" TEXT,
     "login_id" TEXT NOT NULL,
     "hashed_password" TEXT NOT NULL,
-    "session_id" TEXT NOT NULL,
+    "session_id" TEXT,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(3) NOT NULL,
 
@@ -46,7 +46,7 @@ CREATE TABLE "content_details" (
     "language_id" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
     "explanation" TEXT NOT NULL,
-    "audio_path" TEXT NOT NULL,
+    "audio_path" TEXT,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(3) NOT NULL,
 
@@ -57,7 +57,6 @@ CREATE TABLE "content_details" (
 CREATE TABLE "content_images" (
     "id" SERIAL NOT NULL,
     "content_id" INTEGER NOT NULL,
-    "title" TEXT NOT NULL,
     "path" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(3) NOT NULL,
