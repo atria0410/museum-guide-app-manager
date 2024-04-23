@@ -22,7 +22,7 @@ const ContentSchema = yup.object().shape({
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
-  const base64Data = body.images[0].replace('data:image/png;base64,', '')
+  const base64Data = body.images[0].replace(/^data:\w+\/[a-zA-Z_0-9-.]+;base64,/, '')
 
   const path = `${process.cwd()}/public/img.png`
   fs.writeFile(path, base64Data, 'base64', (err) => {
