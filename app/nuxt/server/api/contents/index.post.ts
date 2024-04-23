@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import yup from '@/server/utils/yup.custom'
+import fs from 'node:fs'
 
 const prisma = new PrismaClient()
 
@@ -21,35 +22,42 @@ const ContentSchema = yup.object().shape({
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
-  console.log(body)
+  const base64Data = body.images[0].replace('data:image/png;base64,', '')
 
-  // バリデーションチェック
-  const values = await ContentSchema.validate(body, { abortEarly: false }).catch((e) => {
-    const errorObj: any = {}
-    for (const item of e.inner) {
-      errorObj[item.path] = item.errors[0]
-    }
-    console.log(errorObj)
-    throw createError({ statusCode: 400, statusMessage: e.message, data: errorObj })
+  const path = `${process.cwd()}/public/img.png`
+  fs.writeFile(path, base64Data, 'base64', (err) => {
+    console.log('エラー', err)
   })
 
-  // positionの最大値を取得
-  const { _max } = await prisma.content.aggregate({
-    _max: { position: true }
-  })
-  const maxPosition = _max.position || 0
+  return { msg: 'a' }
 
-  // 登録
-  const createdContent = await prisma.content.create({
-    data: {
-      name: values.name,
-      position: maxPosition + 1,
-      isRecommend: values.isRecommend,
-      isPublic: values.isPublic,
-      details: { create: values.details },
-      images: { create: values.images }
-    }
-  })
+  // // バリデーションチェック
+  // const values = await ContentSchema.validate(body, { abortEarly: false }).catch((e) => {
+  //   const errorObj: any = {}
+  //   for (const item of e.inner) {
+  //     errorObj[item.path] = item.errors[0]
+  //   }
+  //   console.log(errorObj)
+  //   throw createError({ statusCode: 400, statusMessage: e.message, data: errorObj })
+  // })
 
-  return createdContent
+  // // positionの最大値を取得
+  // const { _max } = await prisma.content.aggregate({
+  //   _max: { position: true }
+  // })
+  // const maxPosition = _max.position || 0
+
+  // // 登録
+  // const createdContent = await prisma.content.create({
+  //   data: {
+  //     name: values.name,
+  //     position: maxPosition + 1,
+  //     isRecommend: values.isRecommend,
+  //     isPublic: values.isPublic,
+  //     details: { create: values.details },
+  //     images: { create: values.images }
+  //   }
+  // })
+
+  // return createdContent
 })

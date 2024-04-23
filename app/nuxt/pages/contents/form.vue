@@ -63,15 +63,17 @@ const languages = ref<Language[]>([])
 const languageTab = ref<number>(1)
 
 // ファイル追加
-const onFileAdd = (item: { id: string; file: File }) => {
+const onFileAdd = async (item: { id: string; file: File }) => {
   images.value.push(item)
-  contentForm.value.images.push(item.file)
+  const base64 = await fileToBase64(item.file)
+  contentForm.value.images.push(base64)
 }
 
 // ファイル削除
 const onFileRemove = (item: { id: string; status: 'DONE' | 'ERROR' | 'QUEUE'; file: File }) => {
-  images.value = images.value.filter((image) => image.id !== item.id)
-  contentForm.value.images = images.value.map((image) => image.file)
+  const index = images.value.findIndex((image) => image.id !== item.id)
+  images.value.splice(index, 1)
+  contentForm.value.images.splice(index, 1)
 }
 
 // 言語情報一覧を取得
@@ -97,12 +99,7 @@ const fetchLanguages = async () => {
   })
 }
 
-const registerContent = () => {
-  // const formData = new FormData()
-  // for (const [key, value] of Object.entries(contentForm.value)) {
-  //   formData.append(key, value)
-  // }
-
+const registerContent = async () => {
   $fetch('/api/contents', {
     method: 'POST',
     body: contentForm.value

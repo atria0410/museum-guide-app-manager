@@ -4,7 +4,7 @@ type ContentForm = {
   isRecommend: boolean
   isPublic: boolean
   details: ContentDetailForm[]
-  images: File[]
+  images: (string | ArrayBuffer | null)[]
 }
 
 type ContentDetailForm = {
