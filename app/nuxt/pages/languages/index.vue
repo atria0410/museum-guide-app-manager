@@ -21,11 +21,11 @@
       @click:update="updateLanguage"
       @click:delete="deleteLanguage"
     >
-      <v-text-field v-model="languageForm.name" label="言語名" :error-messages="errorMsg?.name" class="mx-7 my-3" />
+      <v-text-field v-model="languageForm.name" label="言語名" :error-messages="errorMsg.name" class="mx-7 my-3" />
       <v-text-field
         v-model="languageForm.label"
         label="言語名（ラベル）"
-        :error-messages="errorMsg?.label"
+        :error-messages="errorMsg.label"
         class="mx-7 my-3"
       />
       <v-switch
@@ -102,7 +102,7 @@ const mode = ref<FormDialogMode>('new')
 
 const sortDialog = ref<boolean>(false)
 const languagesForSort = ref<Language[]>([])
-const errorMsg = ref()
+const errorMsg = ref({ name: '', label: '' })
 
 // 言語情報一覧を取得
 const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
@@ -126,7 +126,7 @@ const openNewDialog = () => {
   languageForm.value.name = ''
   languageForm.value.label = ''
   languageForm.value.isValid = true
-  errorMsg.value = {}
+  errorMsg.value = { name: '', label: '' }
   mode.value = 'new'
   formDialog.value = true
 }
@@ -137,7 +137,7 @@ const openEditDialog = (language: Language) => {
   languageForm.value.name = language.name
   languageForm.value.label = language.label
   languageForm.value.isValid = language.isValid
-  errorMsg.value = {}
+  errorMsg.value = { name: '', label: '' }
   mode.value = 'edit'
   formDialog.value = true
 }
@@ -192,8 +192,8 @@ const deleteLanguage = async () => {
       closeFormDialog()
       fetchLanguages({ page: 1, itemsPerPage: 10, sortBy: [] })
     })
-    .catch((error) => {
-      console.log('エラー', error)
+    .catch(() => {
+      // TODO:エラーハンドリング
     })
 }
 

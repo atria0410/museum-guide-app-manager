@@ -3,7 +3,7 @@ import yup from '@/server/utils/yup.custom'
 
 const prisma = new PrismaClient()
 
-const languageSchema = yup.object().shape({
+const CreateSchema = yup.object().shape({
   name: yup.string().required().unique(prisma, 'name'),
   label: yup.string().required().unique(prisma, 'label'),
   isValid: yup.bool().required()
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
 
   // バリデーションチェック
-  const values = await languageSchema.validate(body, { abortEarly: false }).catch((e) => {
+  const values = await CreateSchema.validate(body, { abortEarly: false }).catch((e) => {
     const errorObj: any = {}
     for (const item of e.inner) {
       errorObj[item.path] = item.errors[0]

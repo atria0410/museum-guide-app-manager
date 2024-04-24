@@ -58,8 +58,8 @@ model ContentDetail {
   id          Int      @id @default(autoincrement())
   contentId   Int      @map("content_id")
   languageId  Int      @map("language_id")
-  title       String
-  explanation String
+  title       String?
+  explanation String?
   audioPath   String?  @map("audio_path")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)

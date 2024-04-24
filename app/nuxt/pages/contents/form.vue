@@ -2,12 +2,16 @@
   <v-container fluid>
     <v-row>
       <v-col>
-        <v-text-field v-model="contentForm.name" label="コンテンツ名" />
+        <v-text-field v-model="contentForm.name" :error-messages="errorMsg.name" label="コンテンツ名" />
       </v-col>
     </v-row>
 
     <!-- 画像ドロップゾーン -->
-    <ImageDropZone :max-files="5" :max-file-size="1000000" @file-add="onFileAdd" @file-remove="onFileRemove" />
+    <v-row>
+      <v-col>
+        <ImageDropZone :max-files="5" :max-file-size="1000000" @file-add="onFileAdd" @file-remove="onFileRemove" />
+      </v-col>
+    </v-row>
 
     <!-- 言語毎の設定 -->
     <v-row>
@@ -28,7 +32,20 @@
                 </v-row>
                 <v-row>
                   <v-col>
-                    <v-textarea v-model="contentForm.details[index].explanation" label="解説" :rows="10" />
+                    <v-textarea v-model="contentForm.details[index].explanation" label="解説" :rows="5" />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col>
+                    <v-file-input
+                      label="音声ファイル（MPEG）"
+                      accept="audio/mpeg"
+                      @change="audioChange($event, index)"
+                      @click:clear="audioClear(index)"
+                    />
+                    <template v-if="contentForm.details[index].audioFile">
+                      <audio controls :src="contentForm.details[index].audioFile" />
+                    </template>
                   </v-col>
                 </v-row>
               </v-container>
@@ -43,8 +60,6 @@
         <v-btn @click="registerContent">登録</v-btn>
       </v-col>
     </v-row>
-
-    {{ contentForm }}
   </v-container>
 </template>
 
@@ -61,6 +76,7 @@ const contentForm = ref<ContentForm>(contentFormDefault)
 const images = ref<{ id: string; file: File }[]>([])
 const languages = ref<Language[]>([])
 const languageTab = ref<number>(1)
+const errorMsg = ref({ name: '' })
 
 // ファイル追加
 const onFileAdd = async (item: { id: string; file: File }) => {
@@ -74,6 +90,22 @@ const onFileRemove = (item: { id: string; status: 'DONE' | 'ERROR' | 'QUEUE'; fi
   const index = images.value.findIndex((image) => image.id !== item.id)
   images.value.splice(index, 1)
   contentForm.value.images.splice(index, 1)
+}
+
+// 音声ファイル変更
+const audioChange = async (event: Event, index: number) => {
+  const input = event.target as HTMLInputElement
+  if (input.files && input.files.length > 0) {
+    contentForm.value.details[index].audioFile = await fileToBase64(input.files[0])
+  } else {
+    // Chromiumブラウザの場合、ファイル選択をキャンセルすると選択状態が解除される
+    contentForm.value.details[index].audioFile = undefined
+  }
+}
+
+// 音声ファイルクリア
+const audioClear = (index: number) => {
+  contentForm.value.details[index].audioFile = undefined
 }
 
 // 言語情報一覧を取得
@@ -93,23 +125,25 @@ const fetchLanguages = async () => {
         languageId: languages.value[i].id,
         title: '',
         explanation: '',
-        audioPath: ''
+        audioFile: ''
       })
     }
   })
 }
 
+// コンテンツ登録
 const registerContent = async () => {
   $fetch('/api/contents', {
     method: 'POST',
     body: contentForm.value
   })
-    .then(() => {})
+    .then(() => {
+      navigateTo('/contents')
+    })
     .catch((error) => {
-      console.log(error)
-      // if (error.statusCode === 400) {
-      //   errorMsg.value = error.data.data
-      // }
+      if (error.statusCode === 400) {
+        errorMsg.value = error.data.data
+      }
     })
 }
 
@@ -117,3 +151,9 @@ onMounted(() => {
   fetchLanguages()
 })
 </script>
+
+<style scoped lang="scss">
+audio {
+  width: 100%;
+}
+</style>

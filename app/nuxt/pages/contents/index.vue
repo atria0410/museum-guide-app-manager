@@ -13,6 +13,11 @@
       <template #[`item.isPublic`]="{ item }">
         {{ item.isPublic ? '公開' : '非公開' }}
       </template>
+      <template #[`item.edit`]="{ item }">
+        <NuxtLink :to="`contents/edit/${item.id}`" class="disable-link-style">
+          <v-icon>mdi-text-box-edit</v-icon>
+        </NuxtLink>
+      </template>
     </DataTable>
 
     <v-dialog v-model="sortDialog" :max-width="1000" persistent>

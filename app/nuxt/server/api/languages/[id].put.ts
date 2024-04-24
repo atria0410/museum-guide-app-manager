@@ -7,14 +7,14 @@ export default defineEventHandler(async (event) => {
   const id = Number(getRouterParam(event, 'id'))
   const body = await readBody(event)
 
-  const languageSchema = yup.object().shape({
+  const UpdateSchema = yup.object().shape({
     name: yup.string().required().unique(prisma, 'name', id),
     label: yup.string().required().unique(prisma, 'label', id),
     isValid: yup.bool().required()
   })
 
   // バリデーションチェック
-  const values = await languageSchema.validate(body, { abortEarly: false }).catch((error) => {
+  const values = await UpdateSchema.validate(body, { abortEarly: false }).catch((error) => {
     const errorObj: any = {}
     for (const item of error.inner) {
       errorObj[item.path] = item.errors[0]

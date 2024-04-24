@@ -13,6 +13,9 @@ export default defineNuxtPlugin((app) => {
       },
       VTextarea: {
         variant: 'outlined'
+      },
+      VFileInput: {
+        variant: 'outlined'
       }
     }
   })

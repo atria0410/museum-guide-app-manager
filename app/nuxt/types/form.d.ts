@@ -4,15 +4,15 @@ type ContentForm = {
   isRecommend: boolean
   isPublic: boolean
   details: ContentDetailForm[]
-  images: (string | ArrayBuffer | null)[]
+  images: (string | null)[]
 }
 
 type ContentDetailForm = {
   id?: number
   languageId: number
-  title: string
-  explanation: string
-  audioPath: string?
+  title?: string
+  explanation?: string
+  audioFile?: string
 }
 
 type LanguageForm = {

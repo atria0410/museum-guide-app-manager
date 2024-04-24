@@ -1,6 +1,5 @@
 services:
   app:
-    container_name: app
     build:
       context: ./app
       dockerfile: Dockerfile.dev
@@ -15,7 +14,6 @@ services:
       - 24678:24678
 
   db:
-    container_name: db
     build:
       context: ./db
       dockerfile: Dockerfile
@@ -30,7 +28,6 @@ services:
       - "${DB_PORT}:5432"
 
   pgadmin:
-    container_name: pgadmin
     image: elestio/pgadmin:latest
     volumes:
       - pgadmin:/var/lib/pgadmin
