@@ -6,6 +6,11 @@ export default defineEventHandler(async (event) => {
   return await prisma.$transaction(async (prisma) => {
     const id = Number(getRouterParam(event, 'id'))
 
+    // 言語に紐づくコンテンツを全て削除する
+    await prisma.contentDetail.deleteMany({
+      where: { languageId: id }
+    })
+
     // 削除
     const deletedLanguage = await prisma.language.delete({
       where: { id }

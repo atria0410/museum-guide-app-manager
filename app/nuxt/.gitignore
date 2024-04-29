@@ -25,4 +25,10 @@ logs
 
 # Content media
 public/content/audio
+!public/content/audio/.gitkeep
 public/content/image
+!public/content/image/.gitkeep
+
+# User icon
+public/user/icon
+!public/user/icon/.gitkeep

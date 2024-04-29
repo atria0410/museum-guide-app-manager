@@ -1,12 +1,19 @@
 <template>
-  <div>
+  <v-container>
     <div class="d-flex justify-end mb-3">
-      <v-btn variant="outlined" prepend-icon="mdi-sort-numeric-descending" @click="openSortDialog">表示順を変更</v-btn>
+      <v-btn variant="outlined" prepend-icon="mdi-sort-numeric-descending" @click="openSortDialog">
+        表示順を変更
+      </v-btn>
       <NuxtLink to="contents/form" class="disable-link-style">
         <v-btn variant="outlined" class="ml-4">コンテンツを追加</v-btn>
       </NuxtLink>
     </div>
-    <DataTable :headers="headers" :items="contents" :items-length="contentTotalLength" @update="fetchContents">
+    <DataTable
+      :headers="headers"
+      :items="contents"
+      :items-length="contentTotalLength"
+      @update="fetchContents"
+    >
       <template #[`item.isRecommend`]="{ item }">
         {{ item.isRecommend ? '★' : '' }}
       </template>
@@ -58,7 +65,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">

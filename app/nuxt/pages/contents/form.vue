@@ -1,15 +1,24 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <v-row>
       <v-col>
-        <v-text-field v-model="contentForm.name" :error-messages="errorMsg.name" label="コンテンツ名" />
+        <v-text-field
+          v-model="contentForm.name"
+          :error-messages="errorMsg.name"
+          label="コンテンツ名"
+        />
       </v-col>
     </v-row>
 
     <!-- 画像ドロップゾーン -->
     <v-row>
       <v-col>
-        <ImageDropZone :max-files="5" :max-file-size="1000000" @file-add="onFileAdd" @file-remove="onFileRemove" />
+        <ImageDropZone
+          :max-files="5"
+          :max-file-size="1000000"
+          @file-add="onFileAdd"
+          @file-remove="onFileRemove"
+        />
       </v-col>
     </v-row>
 
@@ -23,7 +32,11 @@
             </v-tab>
           </v-tabs>
           <v-window v-model="languageTab">
-            <v-window-item v-for="(language, index) in languages" :key="language.id" :value="language.id">
+            <v-window-item
+              v-for="(language, index) in languages"
+              :key="language.id"
+              :value="language.id"
+            >
               <v-container fluid>
                 <v-row>
                   <v-col>
@@ -32,7 +45,11 @@
                 </v-row>
                 <v-row>
                   <v-col>
-                    <v-textarea v-model="contentForm.details[index].explanation" label="解説" :rows="5" />
+                    <v-textarea
+                      v-model="contentForm.details[index].explanation"
+                      label="解説"
+                      :rows="5"
+                    />
                   </v-col>
                 </v-row>
                 <v-row>

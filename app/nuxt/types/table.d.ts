@@ -17,3 +17,15 @@ type Language = SerializeObject<{
   createdAt: Date
   updatedAt: Date
 }>
+
+type User = SerializeObject<{
+  id: number
+  lastName: string
+  firstName: string
+  iconPath: string
+  loginId: string
+  isAdmin: boolean
+  isValid: boolean
+  createdAt: Date
+  updatedAt: Date
+}>

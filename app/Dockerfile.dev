@@ -6,4 +6,8 @@ COPY ./nuxt /app/nuxt
 
 RUN yarn install
 
+COPY ./entrypoint.sh /usr/local/bin
+
+ENTRYPOINT ["entrypoint.sh"]
+
 CMD ["yarn", "dev", "--inspect"]

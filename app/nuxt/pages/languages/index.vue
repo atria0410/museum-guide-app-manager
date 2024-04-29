@@ -1,10 +1,19 @@
 <template>
-  <div>
+  <v-container>
     <div class="d-flex justify-end mb-3">
-      <v-btn variant="outlined" prepend-icon="mdi-sort-numeric-descending" @click="openSortDialog">表示順を変更</v-btn>
-      <v-btn variant="outlined" prepend-icon="mdi-table-plus" class="ml-4" @click="openNewDialog">言語を追加</v-btn>
+      <v-btn variant="outlined" prepend-icon="mdi-sort-numeric-descending" @click="openSortDialog">
+        表示順を変更
+      </v-btn>
+      <v-btn variant="outlined" prepend-icon="mdi-table-plus" class="ml-4" @click="openNewDialog">
+        言語を追加
+      </v-btn>
     </div>
-    <DataTable :headers="headers" :items="languages" :items-length="languageTotalLength" @update="fetchLanguages">
+    <DataTable
+      :headers="headers"
+      :items="languages"
+      :items-length="languageTotalLength"
+      @update="fetchLanguages"
+    >
       <template #[`item.isValid`]="{ item }">
         {{ item.isValid ? '有効' : '無効' }}
       </template>
@@ -21,17 +30,22 @@
       @click:update="updateLanguage"
       @click:delete="deleteLanguage"
     >
-      <v-text-field v-model="languageForm.name" label="言語名" :error-messages="errorMsg.name" class="mx-7 my-3" />
+      <v-text-field
+        v-model="languageForm.name"
+        :error-messages="languageFormError.name"
+        label="言語名"
+        class="mx-7 my-3"
+      />
       <v-text-field
         v-model="languageForm.label"
+        :error-messages="languageFormError.label"
         label="言語名（ラベル）"
-        :error-messages="errorMsg.label"
         class="mx-7 my-3"
       />
       <v-switch
         v-model="languageForm.isValid"
-        color="primary"
         :label="languageForm.isValid ? '有効' : '無効'"
+        color="primary"
         class="mx-7"
       />
     </FormDialog>
@@ -74,12 +88,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
 import type { DataTableHeader, Options } from '@/components/DataTable.vue'
 
+// ヘッダー
 const headers: DataTableHeader = [
   { title: '表示順', key: 'position', sortable: true, align: 'center', width: 120 },
   { title: '言語名', key: 'name', sortable: true, align: 'start', width: 500 },
@@ -88,21 +103,25 @@ const headers: DataTableHeader = [
   { title: '編集', key: 'edit', sortable: false, align: 'center', width: 80 }
 ]
 
+// 言語フォーム
 const languageFormDefault: LanguageForm = {
+  id: undefined,
   name: '',
   label: '',
   isValid: true
 }
 
+// 言語フォームのエラーメッセージ
+const languageFormErrorDefault: LanguageFormError = { name: '', label: '' }
+
 const languages = ref<Language[]>([])
 const languageTotalLength = ref<number>(0)
-const languageForm = ref<LanguageForm>(languageFormDefault)
 const formDialog = ref<boolean>(false)
 const mode = ref<FormDialogMode>('new')
-
+const languageForm = ref<LanguageForm>({ ...languageFormDefault })
+const languageFormError = ref<LanguageFormError>({ ...languageFormErrorDefault })
 const sortDialog = ref<boolean>(false)
 const languagesForSort = ref<Language[]>([])
-const errorMsg = ref({ name: '', label: '' })
 
 // 言語情報一覧を取得
 const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
@@ -122,11 +141,8 @@ const fetchLanguages = async ({ page, itemsPerPage, sortBy }: Options) => {
 
 // ダイアログを表示（新規登録）
 const openNewDialog = () => {
-  languageForm.value.id = undefined
-  languageForm.value.name = ''
-  languageForm.value.label = ''
-  languageForm.value.isValid = true
-  errorMsg.value = { name: '', label: '' }
+  languageForm.value = { ...languageFormDefault }
+  languageFormError.value = { ...languageFormErrorDefault }
   mode.value = 'new'
   formDialog.value = true
 }
@@ -137,7 +153,7 @@ const openEditDialog = (language: Language) => {
   languageForm.value.name = language.name
   languageForm.value.label = language.label
   languageForm.value.isValid = language.isValid
-  errorMsg.value = { name: '', label: '' }
+  languageFormError.value = { ...languageFormErrorDefault }
   mode.value = 'edit'
   formDialog.value = true
 }
@@ -159,7 +175,7 @@ const registerLanguage = async () => {
     })
     .catch((error) => {
       if (error.statusCode === 400) {
-        errorMsg.value = error.data.data
+        languageFormError.value = error.data.data
       }
     })
 }
@@ -177,7 +193,7 @@ const updateLanguage = async () => {
     })
     .catch((error) => {
       if (error.statusCode === 400) {
-        errorMsg.value = error.data.data
+        languageFormError.value = error.data.data
       }
     })
 }

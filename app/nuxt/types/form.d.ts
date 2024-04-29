@@ -1,3 +1,10 @@
+type FormDialogMode = 'new' | 'edit'
+
+type LoginForm = {
+  loginId: string
+  password: string
+}
+
 type ContentForm = {
   id?: number
   name: string
@@ -22,4 +29,27 @@ type LanguageForm = {
   isValid: boolean
 }
 
-type FormDialogMode = 'new' | 'edit'
+type LanguageFormError = {
+  name: string
+  label: string
+}
+
+type UserForm = {
+  id?: number
+  lastName: string
+  firstName: string
+  loginId: string
+  password: string
+  passwordConfirmation: string
+  icon?: string
+  isAdmin: boolean
+}
+
+type UserFormError = {
+  lastName: string
+  firstName: string
+  icon: string
+  loginId: string
+  password: string
+  passwordConfirmation: string
+}

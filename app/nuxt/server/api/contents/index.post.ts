@@ -7,7 +7,7 @@ import { formatBase64 } from '@/server/utils/formatter'
 const prisma = new PrismaClient()
 
 const CreateSchema = yup.object().shape({
-  name: yup.string().required().unique(prisma, 'name'),
+  name: yup.string().required().unique(prisma.content, 'name'),
   isRecommend: yup.bool().required(),
   isPublic: yup.bool().required(),
   images: yup.array(),

@@ -4,8 +4,8 @@ import yup from '@/server/utils/yup.custom'
 const prisma = new PrismaClient()
 
 const CreateSchema = yup.object().shape({
-  name: yup.string().required().unique(prisma, 'name'),
-  label: yup.string().required().unique(prisma, 'label'),
+  name: yup.string().required().unique(prisma.language, 'name'),
+  label: yup.string().required().unique(prisma.language, 'label'),
   isValid: yup.bool().required()
 })
 

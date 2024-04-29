@@ -2,10 +2,6 @@
   <v-layout>
     <NavigationDrawer />
     <AppBar />
-    <v-main>
-      <v-container>
-        <slot />
-      </v-container>
-    </v-main>
+    <slot />
   </v-layout>
 </template>

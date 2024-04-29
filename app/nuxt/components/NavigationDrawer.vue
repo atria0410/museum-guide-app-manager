@@ -25,7 +25,7 @@ const menuList = [
   { title: 'ホーム', icon: 'mdi-home', to: '/' },
   { title: 'コンテンツ管理', icon: 'mdi-image-edit', to: '/contents' },
   { title: '言語管理', icon: 'mdi-translate-variant', to: '/languages' },
-  { title: 'アカウント管理', icon: 'mdi-account-cog', to: '/accounts' },
+  { title: 'ユーザー管理', icon: 'mdi-account-cog', to: '/users' },
   { title: 'マニュアル', icon: 'mdi-file-document', to: '/manual' },
   { title: 'システム設定', icon: 'mdi-cog', to: '/config' }
 ]
